@@ -99,7 +99,7 @@
                 },
                 "body": {
                   "destination": "@{triggerBody()?['destination']}",
-                  "domain": { "fullName": "FILL ME OUT" }
+                  "domain": { "fullName": "luv2.dev" }
                 }
               }
             },

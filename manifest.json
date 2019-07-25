@@ -3,15 +3,15 @@
   "details": {
     "displayName": "Rebrandly Link Generator",
     "description": "",
-    "createdTime": "2019-07-25T19:54:24.5115402Z",
-    "packageTelemetryId": "8614c46d-63be-476d-83c5-ca5148d8ab60",
+    "createdTime": "2019-07-25T21:06:28.956129Z",
+    "packageTelemetryId": "019d14d1-e675-41aa-b2eb-e79b8aabf62a",
     "creator": "Calvin Allen",
-    "sourceEnvironment": "EZRep, LLC. (default)"
+    "sourceEnvironment": ""
   },
   "resources": {
     "d23122f1-eb1a-4a5e-86ec-8a07f6fa29bc": {
       "type": "Microsoft.Flow/flows",
-      "suggestedCreationType": "Update",
+      "suggestedCreationType": "New",
       "creationType": "Existing, New, Update",
       "details": { "displayName": "Rebrandly Link Generator (Sub Flow)" },
       "configurableBy": "User",
