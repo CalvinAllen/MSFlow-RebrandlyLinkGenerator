@@ -1,0 +1,164 @@
+{
+  "name": "c1086dc2-2772-41e1-a133-551aa4770694",
+  "id": "/providers/Microsoft.Flow/flows/c1086dc2-2772-41e1-a133-551aa4770694",
+  "type": "Microsoft.Flow/flows",
+  "properties": {
+    "apiId": "/providers/Microsoft.PowerApps/apis/shared_logicflows",
+    "displayName": "Rebrandly Link Generator (Sub Flow)",
+    "definition": {
+      "metadata": {
+        "workflowEntityId": null,
+        "creator": {
+          "id": "275d6c0c-ffb6-489d-86bb-46c6503ef26a",
+          "type": "User",
+          "tenantId": "6e23105c-65fe-4fb7-b6e1-20a39f3cbd67"
+        },
+        "provisioningMethod": "FromDefinition",
+        "failureAlertSubscription": true,
+        "clientLastModifiedTime": "2019-07-20T21:41:17.5478041Z"
+      },
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": { "defaultValue": {}, "type": "Object" },
+        "$authentication": { "defaultValue": {}, "type": "SecureObject" }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "Http",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": { "destination": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "actions": {
+        "List_rows_present_in_a_table": {
+          "runAfter": {},
+          "metadata": {
+            "01FTBGVDXZQJT6CLMBIFBIH7GIZOD2ALC7": "/RebrandlyLinkMapping.xlsx",
+            "flowSystemMetadata": { "swaggerOperationId": "GetItems" }
+          },
+          "type": "ApiConnection",
+          "inputs": {
+            "host": {
+              "connection": {
+                "name": "@parameters('$connections')['shared_excelonlinebusiness']['connectionId']"
+              },
+              "api": {
+                "runtimeUrl": "https://unitedstates-002.azure-apim.net/apim/excelonlinebusiness"
+              }
+            },
+            "method": "get",
+            "path": "/drives/@{encodeURIComponent('b!_BWPkncwrEGPPWJoCky5IpnkF67ax0tKohfHHXMWeOpacInJ7cTiRo1y69Xrl-zr')}/files/@{encodeURIComponent('01FTBGVDXZQJT6CLMBIFBIH7GIZOD2ALC7')}/tables/@{encodeURIComponent('{11DED8B0-A6F1-4BFC-9DC7-251B8F80C2CC}')}/items",
+            "queries": {
+              "source": "me",
+              "$filter": "Destination eq '@{triggerBody()?['destination']}'",
+              "$top": 1
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        },
+        "Initialize_variable": {
+          "runAfter": { "List_rows_present_in_a_table": ["Succeeded"] },
+          "type": "InitializeVariable",
+          "inputs": {
+            "variables": [
+              {
+                "name": "TableRow",
+                "type": "Object",
+                "value": "@first(body('List_rows_present_in_a_table')?['Value'])"
+              }
+            ]
+          }
+        },
+        "Condition": {
+          "actions": {
+            "Response": {
+              "runAfter": { "Add_a_row_into_a_table": ["Succeeded"] },
+              "type": "Response",
+              "kind": "Http",
+              "inputs": {
+                "statusCode": 200,
+                "body": "@body('HTTP')['ShortUrl']"
+              }
+            },
+            "HTTP": {
+              "runAfter": {},
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "https://api.rebrandly.com/v1/links",
+                "headers": {
+                  "Content-Type": "application/json",
+                  "apikey": "FILL ME OUT",
+                  "workspace": "FILL ME OUT"
+                },
+                "body": {
+                  "destination": "@{triggerBody()?['destination']}",
+                  "domain": { "fullName": "FILL ME OUT" }
+                }
+              }
+            },
+            "Add_a_row_into_a_table": {
+              "runAfter": { "HTTP": ["Succeeded"] },
+              "metadata": {
+                "01FTBGVDXZQJT6CLMBIFBIH7GIZOD2ALC7": "/RebrandlyLinkMapping.xlsx",
+                "flowSystemMetadata": { "swaggerOperationId": "AddRowV2" }
+              },
+              "type": "ApiConnection",
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['shared_excelonlinebusiness']['connectionId']"
+                  },
+                  "api": {
+                    "runtimeUrl": "https://unitedstates-002.azure-apim.net/apim/excelonlinebusiness"
+                  }
+                },
+                "method": "post",
+                "body": {
+                  "Destination": "@triggerBody()?['destination']",
+                  "ShortUrl": "@{body('HTTP')['ShortUrl']}",
+                  "Id": "@{body('HTTP')['Id']}"
+                },
+                "path": "/codeless/v1.2/drives/@{encodeURIComponent('b!_BWPkncwrEGPPWJoCky5IpnkF67ax0tKohfHHXMWeOpacInJ7cTiRo1y69Xrl-zr')}/items/@{encodeURIComponent('01FTBGVDXZQJT6CLMBIFBIH7GIZOD2ALC7')}/workbook/tables/@{encodeURIComponent('{11DED8B0-A6F1-4BFC-9DC7-251B8F80C2CC}')}/rows",
+                "queries": { "source": "me" },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": { "Initialize_variable": ["Succeeded"] },
+          "else": {
+            "actions": {
+              "Response_2": {
+                "runAfter": {},
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                  "statusCode": 200,
+                  "body": "@variables('TableRow')['ShortUrl']"
+                }
+              }
+            }
+          },
+          "expression": { "equals": ["@variables('TableRow')", "@null"] },
+          "type": "If"
+        }
+      },
+      "outputs": {}
+    },
+    "connectionReferences": {
+      "shared_excelonlinebusiness": {
+        "connectionName": "shared-excelonlinebu-9434ccfc-e81d-48bb-851d-1c6fcb692090",
+        "source": "Embedded",
+        "id": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+        "tier": "NotSpecified"
+      }
+    },
+    "flowFailureAlertSubscribed": false
+  }
+}

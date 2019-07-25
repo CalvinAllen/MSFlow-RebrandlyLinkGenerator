@@ -1,0 +1,50 @@
+{
+  "schema": "1.0",
+  "details": {
+    "displayName": "Rebrandly Link Generator",
+    "description": "",
+    "createdTime": "2019-07-25T19:54:24.5115402Z",
+    "packageTelemetryId": "8614c46d-63be-476d-83c5-ca5148d8ab60",
+    "creator": "Calvin Allen",
+    "sourceEnvironment": "EZRep, LLC. (default)"
+  },
+  "resources": {
+    "d23122f1-eb1a-4a5e-86ec-8a07f6fa29bc": {
+      "type": "Microsoft.Flow/flows",
+      "suggestedCreationType": "Update",
+      "creationType": "Existing, New, Update",
+      "details": { "displayName": "Rebrandly Link Generator (Sub Flow)" },
+      "configurableBy": "User",
+      "hierarchy": "Root",
+      "dependsOn": [
+        "d6fa4bf4-0b04-451c-b41b-6f16db8a73bc",
+        "9cadc1d3-6b8c-4f36-8c10-cfdc1d48241a"
+      ]
+    },
+    "d6fa4bf4-0b04-451c-b41b-6f16db8a73bc": {
+      "id": "/providers/Microsoft.PowerApps/apis/shared_excelonlinebusiness",
+      "name": "shared_excelonlinebusiness",
+      "type": "Microsoft.PowerApps/apis",
+      "suggestedCreationType": "Existing",
+      "details": {
+        "displayName": "Excel Online (Business)",
+        "iconUri": "https://connectoricons-prod.azureedge.net/excelonlinebusiness/icon_1.0.1223.1631.png"
+      },
+      "configurableBy": "System",
+      "hierarchy": "Child",
+      "dependsOn": []
+    },
+    "9cadc1d3-6b8c-4f36-8c10-cfdc1d48241a": {
+      "type": "Microsoft.PowerApps/apis/connections",
+      "suggestedCreationType": "Existing",
+      "creationType": "Existing",
+      "details": {
+        "displayName": "calvin.allen@ezrep.com",
+        "iconUri": "https://connectoricons-prod.azureedge.net/excelonlinebusiness/icon_1.0.1223.1631.png"
+      },
+      "configurableBy": "User",
+      "hierarchy": "Child",
+      "dependsOn": ["d6fa4bf4-0b04-451c-b41b-6f16db8a73bc"]
+    }
+  }
+}
